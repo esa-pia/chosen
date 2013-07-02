@@ -50,14 +50,21 @@ module.exports = (grunt) ->
           'public/chosen.jquery.min.js': ['public/chosen.jquery.js']
           'public/chosen.proto.min.js': ['public/chosen.proto.js']
 
+    compass:
+      chosen_css:
+        files:
+          'public/chosen.css': 'sass/chosen.scss'
+
     cssmin:
       minified_chosen_css:
+        options:
+          banner: "<%= minified_comments %>"
         src: 'public/chosen.css'
         dest: 'public/chosen.min.css'
 
     watch:
       scripts:
-        files: ['coffee/**/*.coffee']
+        files: ['coffee/**/*.coffee', 'sass/*.scss']
         tasks: ['build']
 
     copy:
@@ -106,6 +113,7 @@ module.exports = (grunt) ->
   grunt.loadNpmTasks 'grunt-contrib-watch'
   grunt.loadNpmTasks 'grunt-contrib-copy'
   grunt.loadNpmTasks 'grunt-contrib-clean'
+  grunt.loadNpmTasks 'grunt-contrib-compass'
   grunt.loadNpmTasks 'grunt-contrib-cssmin'
   grunt.loadNpmTasks 'grunt-build-gh-pages'
   grunt.loadNpmTasks 'grunt-zip'
@@ -113,7 +121,7 @@ module.exports = (grunt) ->
   grunt.loadNpmTasks 'grunt-s3'
 
   grunt.registerTask 'default', ['build']
-  grunt.registerTask 'build', ['coffee', 'concat', 'uglify', 'cssmin']
+  grunt.registerTask 'build', ['coffee', 'compass', 'concat', 'uglify', 'cssmin']
   grunt.registerTask 'master-s3', ['build', 'zip:chosen', 's3:master', 'clean:chosen_zip']
   grunt.registerTask 'update-s3', ['build', 'zip:chosen', 'dom_munger:download_links', 's3:master', 's3:latest_version', 'package_jquery', 'clean:chosen_zip']
   grunt.registerTask 'gh_pages', ['copy:dist', 'build_gh_pages:gh_pages']
